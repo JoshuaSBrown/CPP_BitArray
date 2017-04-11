@@ -13,6 +13,8 @@
 #ifndef _BITARRAY_HPP_
 #define _BITARRAY_HPP_
 
+#include <stdbool.h>
+
 typedef char byte;
 
 /******************************************************************************
@@ -65,7 +67,19 @@ class BitArray{
     int setElem(const long long int elem);
     int unsetElem(const long long int elem);
     int getElem(const long long int elem);
+
+/*    unsigned long operator [](int i) const;
+    unsigned long & operator [](int i);*/
+
+/*bool operator!=(BitArray BitA);
+
+    BitArray operator+(BitArray BitA);
+*/
+    int test_BitArrayInternal(void);
+    friend bool operator==(BitArray const &BitAL, BitArray const &BitAR);
+    friend bool operator!=(BitArray const &BitAL, BitArray const &BitAR);
 };
+
 
  /******************************************************************************
  * Library Functions:                                                         *
@@ -76,5 +90,5 @@ class BitArray{
  *     0 - indicates success                                                  *
  *    -1 - indicates failure                                                  *
  ******************************************************************************/
-int test_BitArrayInternal(void);
+
 #endif

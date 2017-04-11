@@ -9,4 +9,4 @@ BitArray.o :
 	$(CC) $(CFLAGS) BitArray.cpp -c
 
 clean:
-	rm *.o
+	rm *.o test_BitArray vgcore*

@@ -1,3 +1,4 @@
+
 /******************************************************************************
  * Created: 28 March 2017                                                     *
  * Author:  Joshua S Brown                                                    *
@@ -25,6 +26,7 @@
  *    - Displayer                                                             *
  *    - Setters                                                               *
  *    - Getters                                                               *
+ *    - Manipulators                                                          *
  * o External Library Functions                                               *
  *    - Testers                                                               *                           *
  ******************************************************************************/
@@ -32,6 +34,8 @@
 #include <cstdlib>
 #include <exception>
 #include <new>
+#include <assert.h>
+#include <stdbool.h>
 
 #include "BitArray.hpp"
 
@@ -41,6 +45,7 @@ using namespace std;
 
 // The number of bits in a single byte
 #define BITS_BYTE 8
+
 
 /******************************************************************************
  * Internal Library Functions                                                 *
@@ -62,24 +67,24 @@ static inline ind _getBitInd(const ind bits){
 
 // Given a byte and the index within the byte determine the value of the bit it
 // should be either a 1 or a 0, index must be between 0 and 7 inclusive.
-static inline unsigned int _getBit(const byte * byt, const ind index){
+static inline unsigned int _getBit(const byte &byt, const ind index){
    switch(index){
      case 0:
-       return *byt & 0x1;
+       return byt & 0x1;
      case 1:
-       return (*byt&(0x1<<1))>>1 ;
+       return (byt&(0x1<<1))>>1 ;
      case 2:
-       return (*byt&(0x1<<2))>>2;
+       return (byt&(0x1<<2))>>2;
      case 3:
-       return (*byt&(0x1<<3))>>3;
+       return (byt&(0x1<<3))>>3;
      case 4:
-       return (*byt&(0x1<<4))>>4;
+       return (byt&(0x1<<4))>>4;
      case 5:
-       return (*byt&(0x1<<5))>>5;
+       return (byt&(0x1<<5))>>5;
      case 6:
-       return (*byt&(0x1<<6))>>6;
+       return (byt&(0x1<<6))>>6;
      case 7:
-       return (*byt&(0x1<<7))>>7;
+       return (byt&(0x1<<7))>>7;
      default:
        return -1;
    }
@@ -87,38 +92,38 @@ static inline unsigned int _getBit(const byte * byt, const ind index){
 
 // Given a byte and the index within the byte set the bit to a value of 1
 // index must be between 0 and 7 inclusive.
-static inline void _setBit(byte * byt, const ind index){
+static inline void _setBit(byte  &byt, const ind index){
   switch(index){
     case 0:{
-      *byt = *byt | 1;
+      byt = byt | 1;
       break;
     }
     case 1:{
-      *byt = *byt | (1<<1);
+      byt = byt | (1<<1);
       break;
     }
     case 2:{
-      *byt = *byt | (1<<2);
+      byt = byt | (1<<2);
       break;
     }
     case 3:{
-      *byt = *byt | (1<<3);
+      byt = byt | (1<<3);
       break;
     }
     case 4:{
-      *byt = *byt | (1<<4);
+      byt = byt | (1<<4);
       break;
     }
     case 5:{
-      *byt = *byt | (1<<5);
+      byt = byt | (1<<5);
       break;
     }
     case 6:{
-      *byt = *byt | (1<<6);
+      byt = byt | (1<<6);
       break;
     }
     case 7:{
-      *byt = *byt | (1<<7);
+      byt = byt | (1<<7);
       break;
     }
   }
@@ -126,65 +131,65 @@ static inline void _setBit(byte * byt, const ind index){
 
 // Given a byte and the index within the byte set the bit to a value of 0
 // index must be between 0 and 7 inclusive.
-static inline void _unsetBit(byte * byt, const ind index){
+static inline void _unsetBit(byte &byt, const ind index){
    switch(index){
      case 0:{
-       *byt = *byt ^ 1;
+       byt = byt ^ 1;
        break;
      }
      case 1:{
-       *byt = *byt ^ (1<<1);
+       byt = byt ^ (1<<1);
        break;
      }
      case 2:{
-       *byt = *byt ^ (1<<2);
+       byt = byt ^ (1<<2);
        break;
      }
      case 3:{
-       *byt = *byt ^ (1<<3);
+       byt = byt ^ (1<<3);
        break;
      }
      case 4:{
-       *byt = *byt ^ (1<<4);
+       byt = byt ^ (1<<4);
        break;
      }
      case 5:{
-       *byt = *byt ^ (1<<5);
+       byt = byt ^ (1<<5);
        break;
      }
      case 6:{
-       *byt = *byt ^ (1<<6);
+       byt = byt ^ (1<<6);
        break;
      }
      case 7:{
-       *byt = *byt ^ (1<<7);
+       byt = byt ^ (1<<7);
        break;
      }
    }
  }
 
- inline static int _getElem(const byte * byt,const ind elem_bit){
+ inline static int _getElem(const byte * const array, const ind elem_bit){
    /* Determine which byte in the array corresponds to elem_bit               */
    ind elem_byte = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
    ind index = _getBitInd(elem_bit);
-   return _getBit(&(byt[elem_byte]),index);
+   return _getBit(array[elem_byte],index);
  }
 
- inline static void _setElem(byte * byt, const ind elem_bit){
+ inline static void _setElem(byte * const array, const ind elem_bit){
    /* Determine which byte in the array corresponds to elem_bit               */
    ind elem_byte = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
    ind index = _getBitInd(elem_bit);
-   _setBit(&(byt[elem_byte]),index);
+   _setBit(array[elem_byte],index);
  }
 
- inline static void _unsetElem(byte * byt, const ind elem_bit){
+ inline static void _unsetElem(byte * const array, const ind elem_bit){
    /* Determine which byte in the array corresponds to elem_bit               */
    ind elem_byte = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
    ind index = _getBitInd(elem_bit);
-   _unsetBit(&(byt[elem_byte]),index);
+   _unsetBit(array[elem_byte],index);
  }
 
 /******************************************************************************
@@ -198,21 +203,16 @@ static inline void _unsetBit(byte * byt, const ind index){
  ******************************************************************************/
 BitArray::BitArray(void){
   this->size = 8;
-  // Determine how many bytes are in the array
-  ind num_bytes = _getBytes(size);
   try{
     this->array = new byte [1];
   }catch(bad_alloc& ba){
     cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
     this->array = NULL;
     this->size  = 0;
-    num_bytes = 0;
   }
   // Initialize elements of byte array to 0
-  for(ind elem_byte=0;elem_byte<num_bytes;elem_byte++){
-    this->array[elem_byte]=0;
+    this->array[0]=0;
   }
-}
 
 BitArray::BitArray(ind size){
   try{
@@ -241,6 +241,7 @@ BitArray::BitArray(ind size){
 }
 
 BitArray::~BitArray(void){
+  cout << "Calling destructor" << endl;
   if(this->array!=NULL){
     delete [] this->array;
   }
@@ -286,7 +287,7 @@ int BitArray::unsetElem(const ind elem_bit){
 }
 
 /* Getters                                                                    */
-int BitArray::getElem(const int elem_bit){
+int BitArray::getElem(const ind elem_bit){
   if(elem_bit>=this->size || elem_bit<0){
     cerr << "ERROR cannot access elem" << elem_bit << " out side of the scope "
             "of the bit_array, bit_array is of size " << this->size << endl;
@@ -295,31 +296,86 @@ int BitArray::getElem(const int elem_bit){
   return _getElem(this->array, elem_bit);
 }
 
+/*unsigned long operator [](int i) const {
 
+}
+
+unsigned long & operator [](int i) {
+
+}*/
+/* Manipulators                                                               */
+bool operator==(BitArray const &BitAL, BitArray const &BitAR){
+  if(BitAL.size!=BitAR.size){
+    return false;
+  }
+    ind num_bytes = _getBytes(BitAL.size);
+    for(ind elem_byte = 0; elem_byte<num_bytes; elem_byte++){
+      if(BitAL.array[elem_byte]!=BitAR.array[elem_byte]){
+        return false;
+      }
+    }
+    return true;
+}
+
+bool operator!=(BitArray const &BitAL, BitArray const &BitAR){
+  if(BitAL.size!=BitAR.size){
+    return true;
+  }
+    ind num_bytes = _getBytes(BitAL.size);
+    for(ind elem_byte = 0; elem_byte<num_bytes; elem_byte++){
+      if(BitAL.array[elem_byte]!=BitAR.array[elem_byte]){
+        return true;
+      }
+    }
+    return false;
+}
+
+/*BitArray BitArray::operator+(BitArray BitA){
+  BitArray BitAnew(BitA->size+this->size);
+  ind num_bytes = _getBytes(this);
+  // Copies the first array over
+  ind index;
+  for(index = 0; index<(num_bytes-1); index++){
+    BitAnew->array[index] = this->array[index];
+  }
+  ind bit_index = (index-1)*BITS_BYTE;
+  // Find the difference
+  ind bit_diff = this->size-bit_index;
+  // Copies the middle component
+  for(;bit_index<this->size;bit_index++){
+    BitAnew.setElem(this.getElem(bit_index));
+  }
+  // Copies the second array
+  for(ind bit_index2 = 0;bit_index2<BitA->size;bit_index2++,bit_index++){
+    BitAnew.setElem(getElem(bit_index));
+  }
+  return BitAnew;
+}
+*/
 /* Testers                                                                    */
 // Meant for testing internal functions
-int test_BitArrayInternal(void){
+int BitArray::test_BitArrayInternal(void){
   // Ensure that the library will funtion correctly internally
   if(sizeof(char)!=1){
-    fprintf(stderr,"ERROR This library was designed assuming that the number of"
-                   "bytes in char is 1. However, on this machine it is %ld\n",
-                   sizeof(char));
+    cerr << "ERROR This library was designed assuming that the number of"
+         << "bytes in char is 1. However, on this machine it is " <<
+         sizeof(char) << endl;
     return -1;
   }
 
-  printf("Testing: _getElemByte\n");
+  cout << "Testing: _getElemByte\n" << endl;
   assert(_getElemByte(0)==0);
   assert(_getElemByte(7)==0);
   assert(_getElemByte(8)==1);
   assert(_getElemByte(16)==2);
 
-  printf("Testing: _getBytes\n");
+  cout << "Testing: _getBytes\n" << endl;
   assert(_getBytes(0)==1);
   assert(_getBytes(7)==1);
   assert(_getBytes(8)==2);
   assert(_getBytes(16)==3);
 
-  printf("Testing: _getBitInd\n");
+  cout << "Testing: _getBitInd\n" << endl;
   assert(_getBitInd(0)==0);
   assert(_getBitInd(1)==1);
   assert(_getBitInd(7)==7);
@@ -328,35 +384,53 @@ int test_BitArrayInternal(void){
   assert(_getBitInd(15)==7);
   assert(_getBitInd(16)==0);
 
-  printf("Testing: _getBit\n");
+  cout << "Testing: _getBit\n" << endl;
   byte byt = 0;
-  for(int i=0;i<8;i++) assert(_getBit(byt,0)==0);
+
+  for(int i=0;i<8;i++) {
+    unsigned int bit = _getBit(byt,i);
+    assert(bit==0);
+  }
 
   byt = 255;
-  for(int i=0;i<8;i++) assert(_getBit(byt,i)==1);
+  for(int i=0;i<8;i++) {
+    unsigned int bit = _getBit(byt,i);
+    assert(bit==1);
+  }
 
-  printf("Testing: _getElem\n");
+  cout << "Testing: _getElem\n" << endl;
   BitArray bit_array(16);
-  assert(bit_array!=NULL);
-  for(int i=0;i<16;i++) assert(_getElem(bit_array,i)==0);
+  for(int i=0;i<16;i++) {
+    unsigned int bit = _getElem(bit_array.array,i);
+    assert(bit==0);
+  }
 
-  printf("Testing: _setBit\n");
-  for(int i=0;i<8;i++) _setBit(&byt,i);
+  cout << "Testing: _setBit\n" << endl;
+  byt = 0;
+  for(int i=0;i<8;i++) _setBit(byt,i);
   for(int i=0;i<8;i++) assert(_getBit(byt,i)==1);
 
-  printf("Testing: _setElem\n");
-  for(int i=0;i<16;i++) _setElem(bit_array,i);
-  for(int i=0;i<16;i++) assert(_getElem(bit_array,i)==1);
 
-  printf("Testing: _unsetBit\n");
-  for(int i=0;i<8;i++) _unsetBit(&byt,i);
-  for(int i=0;i<8;i++) assert(_getBit(byt,i)==0);
+  cout << "Testing: _setElem\n" << endl;
+  for(int i=0;i<16;i++) _setElem(bit_array.array,i);
+  for(int i=0;i<16;i++) {
+    unsigned int bit = _getElem(bit_array.array,i);
+    assert(bit==1);
+  }
 
-  printf("Testing: _unsetElem\n");
-  for(int i=0;i<16;i++) _unsetElem(bit_array,i);
-  for(int i=0;i<16;i++) assert(_getElem(bit_array,i)==0);
+  cout << "Testing: _unsetBit\n" << endl;
+  for(int i=0;i<8;i++) _unsetBit(byt,i);
+  for(int i=0;i<8;i++) {
+    unsigned int bit = _getBit(byt,i);
+    assert(bit==0);
+  }
 
-  deleteBitArray(&bit_array);
+  cout << "Testing: _unsetElem\n" << endl;
+  for(int i=0;i<16;i++) _unsetElem(bit_array.array,i);
+  for(int i=0;i<16;i++) {
+    unsigned int bit = _getElem(bit_array.array,i);
+    assert(bit==0);
+  }
 
   return 0;
 }
