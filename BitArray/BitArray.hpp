@@ -14,6 +14,10 @@
 #define _BITARRAY_HPP_
 
 #include <stdbool.h>
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
 
 typedef char byte;
 
@@ -53,12 +57,72 @@ typedef char byte;
  *    -1 - indicates failure the elem is out of bounds                        *
  *     0 - indicates the value was set to 0                                   *
  *     1 - indicates the vlaue was set to 1                                   *
+ *                                                                            *
+ * Testers                                                                    *
+ * int test_BitArrayInternal(void)                                            *
+ *    This function test the internal class functions and ensures that they   *
+ *    are functioning correctly. Return value is given as:                    *
+ *    -1 - indicates failure to pass a test                                   *
+ *     0 - indicates success                                                  *
  ******************************************************************************/
 
-class BitArray{
-  private:
-    byte * array;
+/*typedef struct _TransitByte TransitByte;
+
+struct _TransitByte{
   public:
+    byte * byt;
+    long long int index;
+    int operator=(const int val);
+    void operator=(TransitByte Tbyt);
+    //void operator=(BitArray BitA);
+    //void operator=(int &val, const TransitByte &Tbyt);
+    //const TransitByte & operator [](const long long int i) const;
+    //friend TransitByte & operator [](const long long int i);
+};
+*/
+
+struct Byte;
+
+class BitArray{
+    private:
+        Byte temp;
+        int size;
+    public:
+        unsigned char * array;
+        BitArray(void);
+        void print(void);
+        Byte& operator[](const long long int index);
+        Byte& operator[](const long int index);
+        Byte& operator[](const int index);
+     
+        BitArray& operator=(BitArray BitA);
+        
+        friend bool operator==(BitArray const &BitAL, BitArray const &BitAR);
+        friend bool operator!=(BitArray const &BitAL, BitArray const &BitAR);
+    
+        void append(BitArray &BitA);
+
+};
+
+
+//class BitArray{
+//  private:
+  /*  byte * array;
+    long long int int_index;
+    int temp;*/
+//  public:
+  /*  static unsigned long registers[8];
+    const unsigned long operator [](int i) const
+       {
+           return registers[i];
+       }
+       unsigned long& operator [](int i)
+          {
+              return registers[i];
+          }
+    byte * array;
+    long long int int_index;
+    int temp;
     long long int size;
     BitArray(void);
     BitArray(long long int size);
@@ -67,18 +131,33 @@ class BitArray{
     int setElem(const long long int elem);
     int unsetElem(const long long int elem);
     int getElem(const long long int elem);
+    void append(BitArray &BitA);
 
-/*    unsigned long operator [](int i) const;
-    unsigned long & operator [](int i);*/
-
-/*bool operator!=(BitArray BitA);
-
-    BitArray operator+(BitArray BitA);
-*/
     int test_BitArrayInternal(void);
     friend bool operator==(BitArray const &BitAL, BitArray const &BitAR);
     friend bool operator!=(BitArray const &BitAL, BitArray const &BitAR);
+   */ /*const int operator[](const long long int i) const{
+      this->int_index = i;
+      this->temp = _getElem(this->array,i);
+      return this->temp;
+    }*/
+   /* operator int() const{
+      return this->temp;
+    }
+    //int& operator [] (const int i);
+    //int& operator [] (const long long int i);
+    void operator =(const BitArray &BitA);
+    void operator =(const int val);
+    //friend void operator=(int &val, BitArray &BitAR);
 };
+*/
+
+//void operator=(int &val, BitArray &BitAR);
+//const TransitByte & operator [](const long long int i);
+//TransitByte & operator [](const long long int i);
+
+//void operator=(TransitByte &Tbyt, const int val);
+//void operator=(int &val, const TransitByte &Tbyt);
 
 
  /******************************************************************************

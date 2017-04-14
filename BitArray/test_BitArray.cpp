@@ -127,6 +127,63 @@ int main(void){
     delete BA2;
     delete BA3;
 
+    cout << "Testing: BitArray append " << endl;
+    BA = new BitArray(15);
+    BA2 = new BitArray(16);
+    long long int i;
+    for(i=0;i<16;i++){
+      BA2->setElem(i);
+    }
+    BA->append(*BA2);
+    for(i=0;i<15;i++){
+      assert(BA->getElem(i)==0);
+    }
+    for(;(i-15)<16;i++){
+      assert(BA->getElem(i)==1);
+    }
+    delete BA;
+    delete BA2;
+
+    cout << "Testing: BitArray []" << endl;
+    BA = new BitArray(12);
+
+    //TransitByte * Tbyt;
+    BA[0] = 1;
+    int temp;
+    temp = int(BA[0]);
+    cout << "PRINTING temp " << temp << endl;
+    BA->print();
+    //BA->setElem(1);
+
+    BA[0] = 1;
+    cout << "Registers\n" << endl;
+    cout << BA[0] << endl;
+    //BA[1] = 1;
+    //BA[2] = 1;
+    //temp = 2;
+    //BA[3] = temp;
+    //cout << "PRINTING temp " << temp << endl;
+    //BA->print();
+    //BA->setElem(2);
+  /*  BA[1];
+    BA[0];
+    temp = int(BA[2]);
+    cout << "PRINTING temp " << temp << endl;
+    BA->print();
+    temp = BA[0];*/
+  /*  for(i=0;i<8;i++){
+      BA[i] = 1;
+    }
+    BA->print();
+    for(i=0;i<12;i++){
+      if(i<8){
+        assert(BA[i]==1);
+      }else{
+        assert(BA[i]==0);
+      }
+    }*/
+    delete BA;
+
   } catch (exception& e) {
     cerr << "error: " << e.what() << endl;
     return 1;

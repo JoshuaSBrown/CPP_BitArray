@@ -1,6 +1,6 @@
 CC = g++
 DEBUG = -g
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -std=c++11
 
 test_BitArray : BitArray.o
 	$(CC) $(CFLAGS) BitArray.o test_BitArray.cpp -o test_BitArray
