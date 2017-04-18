@@ -16,10 +16,9 @@
 #include <stdbool.h>
 #include <iostream>
 #include <cstdlib>
+#include <memory>
 
 using namespace std;
-
-typedef char byte;
 
 /******************************************************************************
  * Class Functions:                                                           *
@@ -38,7 +37,7 @@ typedef char byte;
  *    Prints the size and the contents of the bit array object                *
  *                                                                            *
  * Setters                                                                    *
- * int setElem(long long int elem)                                            *                *
+ * int setElem(long long int elem)                                            *
  *    Sets the element of the bit array to a 1                                *
  *    The return value is an int:                                             *
  *    -1 - indicates there was an error and the element is out of bounds      *
@@ -66,91 +65,31 @@ typedef char byte;
  *     0 - indicates success                                                  *
  ******************************************************************************/
 
-/*typedef struct _TransitByte TransitByte;
-
-struct _TransitByte{
-  public:
-    byte * byt;
-    long long int index;
-    int operator=(const int val);
-    void operator=(TransitByte Tbyt);
-    //void operator=(BitArray BitA);
-    //void operator=(int &val, const TransitByte &Tbyt);
-    //const TransitByte & operator [](const long long int i) const;
-    //friend TransitByte & operator [](const long long int i);
-};
-*/
-
-struct Byte;
+typedef struct _Byte Byte;
 
 class BitArray{
     private:
-        Byte temp;
-        int size;
+        shared_ptr<Byte> temp;
+        long long int size;
     public:
-        unsigned char * array;
+        shared_ptr<unsigned char> array;
         BitArray(void);
+        BitArray(int size);
+        BitArray(long int size);
+        BitArray(long long int size);
         void print(void);
-        Byte& operator[](const long long int index);
-        Byte& operator[](const long int index);
-        Byte& operator[](const int index);
+        Byte& operator[](const long long int elem);
+        Byte& operator[](const long int elem);
+        Byte& operator[](const int elem);
      
         BitArray& operator=(BitArray BitA);
-        
         friend bool operator==(BitArray const &BitAL, BitArray const &BitAR);
         friend bool operator!=(BitArray const &BitAL, BitArray const &BitAR);
     
         void append(BitArray &BitA);
+        int test_BitArrayInternal(void);
 
 };
-
-
-//class BitArray{
-//  private:
-  /*  byte * array;
-    long long int int_index;
-    int temp;*/
-//  public:
-  /*  static unsigned long registers[8];
-    const unsigned long operator [](int i) const
-       {
-           return registers[i];
-       }
-       unsigned long& operator [](int i)
-          {
-              return registers[i];
-          }
-    byte * array;
-    long long int int_index;
-    int temp;
-    long long int size;
-    BitArray(void);
-    BitArray(long long int size);
-    ~BitArray(void);
-    void print(void);
-    int setElem(const long long int elem);
-    int unsetElem(const long long int elem);
-    int getElem(const long long int elem);
-    void append(BitArray &BitA);
-
-    int test_BitArrayInternal(void);
-    friend bool operator==(BitArray const &BitAL, BitArray const &BitAR);
-    friend bool operator!=(BitArray const &BitAL, BitArray const &BitAR);
-   */ /*const int operator[](const long long int i) const{
-      this->int_index = i;
-      this->temp = _getElem(this->array,i);
-      return this->temp;
-    }*/
-   /* operator int() const{
-      return this->temp;
-    }
-    //int& operator [] (const int i);
-    //int& operator [] (const long long int i);
-    void operator =(const BitArray &BitA);
-    void operator =(const int val);
-    //friend void operator=(int &val, BitArray &BitAR);
-};
-*/
 
 //void operator=(int &val, BitArray &BitAR);
 //const TransitByte & operator [](const long long int i);

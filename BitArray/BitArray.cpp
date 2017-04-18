@@ -15,7 +15,9 @@
  *                    byte of interest                                        *
  *  index -           Refers to the bit of interest within a given byte should*
  *                    never excede a value of 7 and must not be less than 0   *
+ *  ind -             Same as index acceptor it is independent of a Byte struc*
  *  num_bytes -       Refers to the total number of bytes in the array.       *
+ *  byt -             A single data structure of tye Byte                     *
  *                                                                            *
  * File Organization is as follows:                                           *
  *  o Internal Library Functions                                              *
@@ -36,6 +38,7 @@
 #include <new>
 #include <assert.h>
 #include <stdbool.h>
+#include <memory.h>
 
 #include "BitArray.hpp"
 
@@ -43,18 +46,15 @@
 
 using namespace std;
 
-
-class BitArray;
-
-struct Byte{ 
+// Byte struct
+struct _Byte{ 
     public:
-        BitArray * Mother;
-        long long int char_ind;
-        unsigned char a_char;
+        shared_ptr<BitArray> Mother;
+        long long int elem_byte;
+        unsigned char uchar;
         unsigned index;
-        
-        Byte& operator=(Byte byt);
-        Byte& operator=(int num);
+        Byte& operator=(Byte &byt);
+        Byte& operator=(int ind);
         operator int();
     
 };
@@ -81,24 +81,24 @@ static inline long long int _getBitInd(const long long int bits){
 
 // Given a unsigned char and the long long index within the unsigned char determine the value of the bit it
 // should be either a 1 or a 0, long long index must be between 0 and 7 inclusive.
-static inline unsigned int _getBit(const unsigned char &a_char, const long long int long long index){
-   switch(long long index){
+static inline unsigned int _getBit(const unsigned char &uchar, const long long int ind){
+   switch(ind){
      case 0:
-       return a_char & 0x1;
+       return uchar & 0x1;
      case 1:
-       return (a_char&(0x1<<1))>>1 ;
+       return (uchar&(0x1<<1))>>1 ;
      case 2:
-       return (a_char&(0x1<<2))>>2;
+       return (uchar&(0x1<<2))>>2;
      case 3:
-       return (a_char&(0x1<<3))>>3;
+       return (uchar&(0x1<<3))>>3;
      case 4:
-       return (a_char&(0x1<<4))>>4;
+       return (uchar&(0x1<<4))>>4;
      case 5:
-       return (a_char&(0x1<<5))>>5;
+       return (uchar&(0x1<<5))>>5;
      case 6:
-       return (a_char&(0x1<<6))>>6;
+       return (uchar&(0x1<<6))>>6;
      case 7:
-       return (a_char&(0x1<<7))>>7;
+       return (uchar&(0x1<<7))>>7;
      default:
        return -1;
    }
@@ -106,38 +106,38 @@ static inline unsigned int _getBit(const unsigned char &a_char, const long long 
 
 // Given a unsigned char and the long long index within the unsigned char set the bit to a value of 1
 // long long index must be between 0 and 7 inclusive.
-static inline void _setBit(unsigned char  &a_char, const long long int long long index){
-  switch(long long index){
+static inline void _setBit(unsigned char  &uchar, const long long int ind){
+  switch(ind){
     case 0:{
-      a_char = a_char | 1;
+      uchar = uchar | 1;
       break;
     }
     case 1:{
-      a_char = a_char | (1<<1);
+      uchar = uchar | (1<<1);
       break;
     }
     case 2:{
-      a_char = a_char | (1<<2);
+      uchar = uchar | (1<<2);
       break;
     }
     case 3:{
-      a_char = a_char | (1<<3);
+      uchar = uchar | (1<<3);
       break;
     }
     case 4:{
-      a_char = a_char | (1<<4);
+      uchar = uchar | (1<<4);
       break;
     }
     case 5:{
-      a_char = a_char | (1<<5);
+      uchar = uchar | (1<<5);
       break;
     }
     case 6:{
-      a_char = a_char | (1<<6);
+      uchar = uchar | (1<<6);
       break;
     }
     case 7:{
-      a_char = a_char | (1<<7);
+      uchar = uchar | (1<<7);
       break;
     }
   }
@@ -145,65 +145,65 @@ static inline void _setBit(unsigned char  &a_char, const long long int long long
 
 // Given a unsigned char and the long long index within the unsigned char set the bit to a value of 0
 // long long index must be between 0 and 7 inclusive.
-static inline void _unsetBit(unsigned char &a_char, const long long int long long index){
-   switch(long long index){
+static inline void _unsetBit(unsigned char &uchar, const long long int ind){
+   switch(ind){
      case 0:{
-       a_char = a_char & !1;
+       uchar = uchar & !1;
        break;
      }
      case 1:{
-       a_char = a_char & !(1<<1);
+       uchar = uchar & !(1<<1);
        break;
      }
      case 2:{
-       a_char = a_char & !(1<<2);
+       uchar = uchar & !(1<<2);
        break;
      }
      case 3:{
-       a_char = a_char & !(1<<3);
+       uchar = uchar & !(1<<3);
        break;
      }
      case 4:{
-       a_char = a_char & !(1<<4);
+       uchar = uchar & !(1<<4);
        break;
      }
      case 5:{
-       a_char = a_char & !(1<<5);
+       uchar = uchar & !(1<<5);
        break;
      }
      case 6:{
-       a_char = a_char & !(1<<6);
+       uchar = uchar & !(1<<6);
        break;
      }
      case 7:{
-       a_char = a_char & !(1<<7);
+       uchar = uchar & !(1<<7);
        break;
      }
    }
  }
 
- inline static int _getElem(const unsigned char * const array, const long long int elem_bit){
-   /* Determine which unsigned char in the array corresponds to elem_bit               */
-   long long int elem_unsigned char = _getElemByte(elem_bit);
+inline static int _getElem(shared_ptr<unsigned char> array, const long long int elem_bit){
+   // Determine which unsigned char in the array corresponds to elem_bit            
+   long long int elem_unsigned = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
-   long long int long long index = _getBitInd(elem_bit);
-   return _getBit(array[elem_unsigned char],long long index);
+   long long int ind = _getBitInd(elem_bit);
+   return _getBit(array.get()[elem_unsigned],ind);
  }
 
- inline static void _setElem(unsigned char * const array, const long long int elem_bit){
-   /* Determine which unsigned char in the array corresponds to elem_bit               */
-   long long int elem_unsigned char = _getElemByte(elem_bit);
+ inline static void _setElem(shared_ptr<unsigned char> array, const long long int elem_bit){
+   // Determine which unsigned char in the array corresponds to elem_bit            
+   long long int elem_unsigned = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
-   long long int long long index = _getBitInd(elem_bit);
-   _setBit(array[elem_unsigned char],long long index);
+   long long int index = _getBitInd(elem_bit);
+   _setBit(array.get()[elem_unsigned],index);
  }
 
- inline static void _unsetElem(unsigned char * const array, const long long int elem_bit){
-   /* Determine which unsigned char in the array corresponds to elem_bit               */
-   long long int elem_unsigned char = _getElemByte(elem_bit);
+ inline static void _unsetElem(shared_ptr<unsigned char> array, const long long int elem_bit){
+   // Determine which unsigned char in the array corresponds to elem_bit             
+   long long int elem_unsigned = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
-   long long int long long index = _getBitInd(elem_bit);
-   _unsetBit(array[elem_unsigned char],long long index);
+   long long int index = _getBitInd(elem_bit);
+   _unsetBit(array.get()[elem_unsigned],index);
  }
 
 /******************************************************************************
@@ -219,42 +219,43 @@ static inline void _unsetBit(unsigned char &a_char, const long long int long lon
 
 
 Byte& Byte::operator=(Byte &byt){
-    int temp_bit = _getBit(byt.a_char,byt.index);
+    int temp_bit = _getBit(byt.uchar,byt.index);
     if(temp_bit){
-        _setBit(this->a_char,this->index);
+        _setBit(this->uchar,this->index);
     }else{
-        _unsetBit(this->a_char,this->index);
+        _unsetBit(this->uchar,this->index);
     }
-    this->Mother->array[this->char_ind]=this->a_char;
+    this->Mother->array.get()[this->elem_byte]=this->uchar;
     return *this;
 } 
 
-Byte& Byte::operator=(int num){
-    if(num){
-        _setBit(this->a_char,this->index);
+Byte& Byte::operator=(int ind){
+    if(ind){
+        _setBit(this->uchar,this->index);
     }else{
-        _unsetBit(this->a_char,this->index);
+        _unsetBit(this->uchar,this->index);
     }
-    this->Mother->array[this->char_ind]=this->a_char;
+    this->Mother->array.get()[this->elem_byte]=this->uchar;
     return *this;
 }
 
 Byte::operator int(){
-    return _getBit(this->val,index);
+    return _getBit(this->uchar,this->index);
 }
 
 BitArray::BitArray(void){
   this->size = BITS_BYTE;
   try{
-    this->array = new unsigned char [1];
+    this->array.reset( new unsigned char(1));
+    //this->array = new unsigned char [1];
   }catch(bad_alloc& ba){
     cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
     this->array = NULL;
     this->size  = 0;
   }
+
   // Initialize elements of unsigned char array to 0
-    this->array[0]=0;
-    this->int_long long index = -1;
+    this->array.get()[0]=0;
 }
 
 BitArray::BitArray(long long int size){
@@ -264,54 +265,104 @@ BitArray::BitArray(long long int size){
     cerr << "ERROR size was less than 1 in BitArray constructor" << endl;
   }
   // Determine how many unsigned chars are in the array
-  long long int num_unsigned chars = _getBytes(size);
+  long long int num_unsigned_chars = _getBytes(size);
   // Allocated memory for bit array pointer
   try{
-    this->array = (unsigned char *) new unsigned char [num_unsigned chars];
+    this->array.reset( new unsigned char(num_unsigned_chars));
     this->size = size;
   } catch(bad_alloc& ba){
     cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
-    delete [] this->array;
     this->array = NULL;
     this->size  = 0;
-    num_unsigned chars = 0;
+    num_unsigned_chars = 0;
   }
  
   // Initialize elements of unsigned char array to 0
-  for(long long int elem_unsigned char=0;elem_unsigned char<num_unsigned chars;elem_unsigned char++){
-    this->array[elem_unsigned char]=0;
+  for(long long int elem_unsigned =0;elem_unsigned <num_unsigned_chars;elem_unsigned++){
+    this->array.get()[elem_unsigned]=0;
   }
-  this->int_long long index = -1;
 }
 
-BitArray::~BitArray(void){
+BitArray::BitArray(long int size){
+
+  long long int size2 = (long long int) size;
+  try{
+    if(size2<1) throw 1;
+  }catch( int er){
+    cerr << "ERROR size was less than 1 in BitArray constructor" << endl;
+  }
+  // Determine how many unsigned chars are in the array
+  long long int num_unsigned_chars = _getBytes(size2);
+  // Allocated memory for bit array pointer
+  try{
+    this->array.reset( new unsigned char(num_unsigned_chars));
+    this->size = size2;
+  } catch(bad_alloc& ba){
+    cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
+    this->array = NULL;
+    this->size  = 0;
+  }
+ 
+  // Initialize elements of unsigned char array to 0
+  for(long long int elem_unsigned =0;elem_unsigned <num_unsigned_chars;elem_unsigned++){
+    this->array.get()[elem_unsigned]=0;
+  }
+}
+
+BitArray::BitArray(int size){
+
+  long long int size2 = (long long int) size;
+  try{
+    if(size2<1) throw 1;
+  }catch( int er){
+    cerr << "ERROR size was less than 1 in BitArray constructor" << endl;
+  }
+  // Determine how many unsigned chars are in the array
+  long long int num_unsigned_chars = _getBytes(size2);
+  // Allocated memory for bit array pointer
+  try{
+    this->array.reset( new unsigned char(num_unsigned_chars));
+    this->size = size2;
+  } catch(bad_alloc& ba){
+    cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
+    this->array = NULL;
+    this->size  = 0;
+    num_unsigned_chars = 0;
+  }
+ 
+  cout << "num unsigned " << num_unsigned_chars << endl;
+  cout << "array use count " << this->array.use_count() << endl;
+  // Initialize elements of unsigned char array to 0
+  for(long long int elem_unsigned =0;elem_unsigned <num_unsigned_chars;elem_unsigned++){
+    this->array.get()[elem_unsigned]=0;
+  }
+}
+
+/*BitArray::~BitArray(void){
   cout << "Calling destructor" << endl;
   if(this->array!=NULL){
     delete [] this->array;
   }
-}
+}*/
 
 /* Displayer                                                                  */
 void BitArray::print(void){
   cout << "Array size:     "           << this->size                << endl;
   cout << "Required unsigned chars: "  << _getBytes(this->size)     << endl;
-  cout << "int_long long index       " << this->int_long long index << endl;
-  cout << "temp            "           << this->temp                << endl;
-  cout << "Bits"                       << endl;
   long long int BitsPerRow = 80;
-  long long int i=0;
-  while(i<this->size){
-    if(i%BitsPerRow==0){
+  long long int elem_bit   = 0;
+  while(elem_bit<this->size){
+    if(elem_bit%BitsPerRow==0){
       cout << endl;
     }
-    cout << _getElem(this->array,i) << endl;
-    i++;
+    cout << _getElem(this->array,elem_bit) << endl;
+    elem_bit++;
   }
   cout << endl;
 }
 
 /* Setters                                                                    */
-int BitArray::setElem(const long long int elem_bit){
+/*int BitArray::setElem(const long long int elem_bit){
   if(elem_bit>=this->size || elem_bit<0){
     cerr << "ERROR cannot access elem " << elem_bit << " out side of the scope "
             "of the bit_array, bit_array is of size " << this->size  << endl;
@@ -330,10 +381,10 @@ int BitArray::unsetElem(const long long int elem_bit){
 
   _unsetElem(this->array, elem_bit);
   return 0;
-}
+}*/
 
 /* Getters                                                                    */
-
+/*
 int BitArray::getElem(const long long int elem_bit){
   if(elem_bit>=this->size || elem_bit<0){
     cerr << "ERROR cannot access elem" << elem_bit << " out side of the scope "
@@ -341,43 +392,26 @@ int BitArray::getElem(const long long int elem_bit){
     return -1;
   }
   return _getElem(this->array, elem_bit);
-}
+}*/
 
 /* Manipulators                                                               */
-bool operator==(BitArray const &BitAL, BitArray const &BitAR){
-  if(BitAL.size!=BitAR.size){
-    return false;
-  }
-    long long int num_unsigned chars = _getBytes(BitAL.size);
-    for(long long int elem_unsigned char = 0; elem_unsigned char<num_unsigned chars; elem_unsigned char++){
-      if(BitAL.array[elem_unsigned char]!=BitAR.array[elem_unsigned char]){
-        return false;
-      }
-    }
-    return true;
-}
 
-bool operator!=(BitArray const &BitAL, BitArray const &BitAR){
-  if(BitAL.size!=BitAR.size){
-    return true;
-  }
-    long long int num_unsigned chars = _getBytes(BitAL.size);
-    for(long long int elem_unsigned char = 0; elem_unsigned char<num_unsigned chars; elem_unsigned char++){
-      if(BitAL.array[elem_unsigned char]!=BitAR.array[elem_unsigned char]){
-        return true;
-      }
-    }
-    return false;
-}
-
-Byte& BitArray::operator[](int elem_bit){
-    int index  = elem_bit%BITS_BYTE;
-    int elem_byte = elem_bit/BITS_BYTE;
-    this->temp.char_ind = elem_byte;
-    this->temp.a_char= this->array[elem_byte];
-    this->temp.index = index;
-    this->temp.Mother = this;
+/*Byte& BitArray::operator[](const long long int elem_bit){
+    unsigned ind          = (unsigned) (elem_bit%BITS_BYTE);
+    long long int elem_byte = elem_bit/BITS_BYTE;
+    this->temp.elem_byte     = elem_byte;
+    this->temp.uchar       = this->array[elem_byte];
+    this->temp.index        = ind;
+    this->temp.Mother       = this;
     return (this->temp);
+}
+
+Byte& BitArray::operator[](const long int elem_bit){
+    return this[(long long int) elem_bit];
+}
+
+Byte& BitArray::operator[](const int elem_bit){
+    return this[(long long int) elem_bit];
 }
 
 void BitArray::operator = (const BitArray &BitA){
@@ -389,18 +423,45 @@ void BitArray::operator = (const BitArray &BitA){
   }
 }
 
-void BitArray::operator = (const int var){
+
+bool operator==(BitArray const &BitAL, BitArray const &BitAR){
+  if(BitAL.size!=BitAR.size){
+    return false;
+  }
+    long long int num_unsigned_chars = _getBytes(BitAL.size);
+    for(long long int elem_unsigned = 0; elem_unsigned <num_unsigned_chars; elem_unsigned++){
+      if(BitAL.array[elem_unsigned ]!=BitAR.array[elem_unsigned ]){
+        return false;
+      }
+    }
+    return true;
+}
+
+bool operator!=(BitArray const &BitAL, BitArray const &BitAR){
+  if(BitAL.size!=BitAR.size){
+    return true;
+  }
+    long long int num_unsigned_chars = _getBytes(BitAL.size);
+    for(long long int elem_unsigned = 0; elem_unsigned <num_unsigned_chars; elem_unsigned++){
+      if(BitAL.array[elem_unsigned]!=BitAR.array[elem_unsigned]){
+        return true;
+      }
+    }
+    return false;
+}*/
+/*
+void BitArray::operator = (const long long int index){
   if(var){
     _setElem(this->array,this->int_long long index);
   }else{
     _unsetElem(this->array,this->int_long long index);
   }
 }
-
-
+*/
+/*
 void BitArray::append(BitArray &BitA){
 
-    int num_bytes = (this->size+BitA.size)/BITS+1;
+    long long int num_bytes = (this->size+BitA.size)/BITS+1;
     unsigned char * array_new;
     try{
         array_new = (unsigned char *) new unsigned char [num_bytes];
@@ -410,17 +471,17 @@ void BitArray::append(BitArray &BitA){
 
     num_bytes = (this->size)/BITS+1;
 
-    int count;
+    long long int count;
     for( count = 0; count<num_bytes;count++){
         array_new[count] = this->array[count];
     }
 
-    int bit_index = (count-1)*BITS+(this->size-(count-1)*BITS);
+    long long int bit_index = (count-1)*BITS+(this->size-(count-1)*BITS);
     delete [] this->array;
     this->array = array_new;
     this->size  = bit_index+BitA.size;
 
-    for(int bit_index2 = 0;bit_index2<BitA.size;bit_index2++,bit_index){
+    for(long long int bit_index2 = 0;bit_index2<BitA.size;bit_index2++,bit_index){
         if(_getElem(BitA.array,bit_index2)){
             _setElem(this->array,bit_index);
         }else{
@@ -429,7 +490,7 @@ void BitArray::append(BitArray &BitA){
     }
 
 }
-
+*/
 
 /* Testers                                                                    */
 // Meant for testing internal functions
@@ -464,52 +525,52 @@ int BitArray::test_BitArrayInternal(void){
   assert(_getBitInd(16)==0);
 
   cout << "Testing: _getBit\n" << endl;
-  unsigned char a_char = 0;
+  unsigned char uchar = 0;
 
-  for(int i=0;i<8;i++) {
-    unsigned int bit = _getBit(a_char,i);
+  for(int ind=0;ind<8;ind++) {
+    unsigned int bit = _getBit(uchar,ind);
     assert(bit==0);
   }
 
-  a_char = 255;
-  for(int i=0;i<8;i++) {
-    unsigned int bit = _getBit(a_char,i);
+  uchar = 255;
+  for(int ind=0;ind<8;ind++) {
+    unsigned int bit = _getBit(uchar,ind);
     assert(bit==1);
   }
 
   cout << "Testing: _getElem\n" << endl;
-  BitArray bit_array(16);
-  for(int i=0;i<16;i++) {
-    unsigned int bit = _getElem(bit_array.array,i);
-    assert(bit==0);
-  }
-
+  BitArray bit_array = BitArray(16);
+//  for(int elem_bit=0;elem_bit<16;elem_bit++) {
+    //unsigned int bit = _getElem(bit_array.array,elem_bit);
+    //assert(bit==0);
+//  }
+/*
   cout << "Testing: _setBit\n" << endl;
-  a_char = 0;
-  for(int i=0;i<8;i++) _setBit(a_char,i);
-  for(int i=0;i<8;i++) assert(_getBit(a_char,i)==1);
+  uchar = 0;
+  for(int ind=0;ind<8;ind++) _setBit(uchar,ind);
+  for(int ind=0;ind<8;ind++) assert(_getBit(uchar,ind)==1);
 
 
   cout << "Testing: _setElem\n" << endl;
-  for(int i=0;i<16;i++) _setElem(bit_array.array,i);
-  for(int i=0;i<16;i++) {
-    unsigned int bit = _getElem(bit_array.array,i);
+  for(int elem_bit=0;elem_bit<16;elem_bit++) _setElem(bit_array.array,elem_bit);
+  for(int elem_bit=0;elem_bit<16;elem_bit++) {
+    unsigned int bit = _getElem(bit_array.array,elem_bit);
     assert(bit==1);
   }
 
   cout << "Testing: _unsetBit\n" << endl;
-  for(int i=0;i<8;i++) _unsetBit(a_char,i);
-  for(int i=0;i<8;i++) {
-    unsigned int bit = _getBit(a_char,i);
+  for(int ind=0;ind<8;ind++) _unsetBit(uchar,ind);
+  for(int ind=0;ind<8;ind++) {
+    unsigned int bit = _getBit(uchar,ind);
     assert(bit==0);
   }
 
   cout << "Testing: _unsetElem\n" << endl;
-  for(int i=0;i<16;i++) _unsetElem(bit_array.array,i);
-  for(int i=0;i<16;i++) {
-    unsigned int bit = _getElem(bit_array.array,i);
+  for(int elem_bit=0;elem_bit<16;elem_bit++) _unsetElem(bit_array.array,elem_bit);
+  for(int elem_bit=0;elem_bit<16;elem_bit++) {
+    unsigned int bit = _getElem(bit_array.array,elem_bit);
     assert(bit==0);
   }
-
+*/
   return 0;
 }

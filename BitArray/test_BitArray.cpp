@@ -11,29 +11,24 @@ using namespace std;
 
 int main(void){
 
-  try {
+//  try {
     /* all of your code goes here */
 
     cout << "Beginning Test of BitArray Library\n" << endl;
 
     cout << "Testing: BitArray constructors and destructors" << endl;
-    BitArray * BA = new BitArray();
-    delete BA;
-    BitArray * BA2 = new BitArray(5);
-    delete BA2;
-    BitArray * BA3 = new BitArray(-1);
-    delete BA3;
-
+    BitArray BA = BitArray();
+    BitArray BA2 = BitArray(5);
+    BitArray BA3 = BitArray(-1);
+   
     cout << "Testing: BitArray internal functions" << endl;
-    BA = new BitArray(4);
-    BA->test_BitArrayInternal();
-    delete BA;
-
-    cout << "Testing: BitArray displayer" << endl;
-    BA = new BitArray(12);
-    BA->print();
-    delete BA;
-
+    BitArray BA4 = BitArray(4);
+    BA4.test_BitArrayInternal();
+    
+/*    cout << "Testing: BitArray displayer" << endl;
+    BitArray BA5 = BitArray(12);
+    BA.print();*/
+/*
     cout << "Testing: BitArray setElem" << endl;
     BA = new BitArray(17);
     int rv = BA->setElem(17);
@@ -165,7 +160,7 @@ int main(void){
     //cout << "PRINTING temp " << temp << endl;
     //BA->print();
     //BA->setElem(2);
-  /*  BA[1];
+ */ /*  BA[1];
     BA[0];
     temp = int(BA[2]);
     cout << "PRINTING temp " << temp << endl;
@@ -182,14 +177,14 @@ int main(void){
         assert(BA[i]==0);
       }
     }*/
-    delete BA;
+  //  delete BA;
 
-  } catch (exception& e) {
+  /*} catch (exception& e) {
     cerr << "error: " << e.what() << endl;
     return 1;
   } catch(...) {
     cerr << "error: unknown exceptions" << endl;
     return 1;
-  }
+  }*/
   return 0;
 }
