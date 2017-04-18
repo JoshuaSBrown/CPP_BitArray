@@ -17,7 +17,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <memory>
-
+#include <vector>
 using namespace std;
 
 /******************************************************************************
@@ -72,12 +72,15 @@ class BitArray{
         shared_ptr<Byte> temp;
         long long int size;
     public:
-        shared_ptr<unsigned char> array;
+        shared_ptr<vector<unsigned char>> array;
         BitArray(void);
         BitArray(int size);
         BitArray(long int size);
         BitArray(long long int size);
         void print(void);
+        int getElem(const long long int elem);
+        int setElem(const long long int elem);
+        int unsetElem(const long long int elem);
         Byte& operator[](const long long int elem);
         Byte& operator[](const long int elem);
         Byte& operator[](const int elem);

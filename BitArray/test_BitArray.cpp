@@ -20,107 +20,101 @@ int main(void){
     BitArray BA = BitArray();
     BitArray BA2 = BitArray(5);
     BitArray BA3 = BitArray(-1);
+    long int var = 300;
+    BitArray BA4 = BitArray(var);
+    long long int var2 = 321;
+    BitArray BA5 = BitArray(var2);
    
     cout << "Testing: BitArray internal functions" << endl;
-    BitArray BA4 = BitArray(4);
-    BA4.test_BitArrayInternal();
+    BitArray BA6 = BitArray(4);
+    BA6.test_BitArrayInternal();
     
-/*    cout << "Testing: BitArray displayer" << endl;
-    BitArray BA5 = BitArray(12);
-    BA.print();*/
-/*
+    cout << "Testing: BitArray displayer" << endl;
+    BitArray BA7 = BitArray(12);
+    BA7.print();
+
     cout << "Testing: BitArray setElem" << endl;
-    BA = new BitArray(17);
-    int rv = BA->setElem(17);
+    BitArray BA8 = BitArray(17);
+    int rv = BA8.setElem(17);
     assert(rv==-1);
-    rv = BA->setElem(-1);
+    rv = BA8.setElem(-1);
     assert(rv==-1);
-    rv = BA->setElem(0);
+    rv = BA8.setElem(0);
     assert(rv==0);
-    rv = BA->setElem(16);
+    rv = BA8.setElem(16);
     assert(rv==0);
-    delete BA;
 
     cout << "Testing: BitArray getElem" << endl;
-    BA = new BitArray(18);
-    rv = BA->getElem(-1);
+    BitArray BA9 = BitArray(18);
+    rv = BA9.getElem(-1);
     assert(rv==-1);
-    rv = BA->getElem(18);
+    rv = BA9.getElem(18);
     assert(rv==-1);
-    rv = BA->getElem(17);
+    rv = BA9.getElem(17);
     assert(rv==0);
-    rv = BA->getElem(0);
+    rv = BA9.getElem(0);
     assert(rv==0);
-    rv = BA->setElem(1);
+    rv = BA9.setElem(1);
     assert(rv==0);
-    rv = BA->getElem(1);
+    rv = BA9.getElem(1);
     assert(rv==1);
-    rv = BA->getElem(2);
+    rv = BA9.getElem(2);
     assert(rv==0);
-    rv = BA->setElem(17);
+    rv = BA9.setElem(17);
     assert(rv==0);
-    rv = BA->getElem(17);
+    rv = BA9.getElem(17);
     assert(rv==1);
-    rv = BA->getElem(16);
+    rv = BA9.getElem(16);
     assert(rv==0);
-    delete BA;
 
     cout << "Testing: BitArray unsetElem" << endl;
-    BA = new BitArray(21);
-    rv = BA->unsetElem(-1);
+    BitArray BA10 = BitArray(21);
+    rv = BA10.unsetElem(-1);
     assert(rv==-1);
-    rv = BA->unsetElem(21);
+    rv = BA10.unsetElem(21);
     assert(rv==-1);
     for(long long int i=0;i<21;i++){
-      BA->setElem(i);
-      rv = BA->getElem(i);
+      BA10.setElem(i);
+      rv = BA10.getElem(i);
       assert(rv==1);
     }
     for(long long int i=0;i<21;i++){
-      rv = BA->unsetElem(i);
+      rv = BA10.unsetElem(i);
       assert(rv==0);
-      rv = BA->getElem(i);
+      rv = BA10.getElem(i);
       cout << "i " << i << " rv " << rv << endl;
       assert(rv==0);
     }
-    delete BA;
-
 
     cout << "Testing: BitArray operators ==" << endl;
-    BA = new BitArray();
-    bool ans = (BA==BA);
+    BitArray BA11 = BitArray();
+    bool ans = (BA11==BA11);
     assert(ans==true);
-    BA2 = new BitArray(21);
-    ans = (BA==BA2);
+    BitArray BA12 = BitArray(21);
+    ans = (BA11==BA12);
     assert(ans==false);
-    BA->setElem(4);
-    ans = (BA==BA);
+    BA11.setElem(4);
+    ans = (BA11==BA11);
     assert(ans==true);
-    BA3 = new BitArray();
-    BA3->setElem(4);
-    ans = (BA==BA3);
+    BitArray BA13 = BitArray();
+    BA13.setElem(5);
+    ans = (BA11==BA13);
     assert(ans==false);
-    delete BA;
-    delete BA2;
-    delete BA3;
 
     cout << "Testing: BitArray operators !=" << endl;
-    BA = new BitArray();
-    ans = (BA!=BA);
+    BitArray BA14 = BitArray();
+    ans = (BA14!=BA14);
     assert(ans==false);
-    BA2 = new BitArray(21);
-    ans = (BA!=BA2);
+    BitArray BA15 = BitArray(21);
+    ans = (BA14!=BA15);
     assert(ans==true);
-    BA->setElem(4);
-    ans = (BA!=BA);
+    BA14.setElem(4);
+    ans = (BA14!=BA14);
     assert(ans==false);
-    BA3 = new BitArray();
-    BA3->setElem(4);
-    ans = (BA!=BA3);
+    BitArray BA16 = BitArray();
+    BA16.setElem(5);
+    ans = (BA14!=BA16);
     assert(ans==true);
-    delete BA;
-    delete BA2;
-    delete BA3;
 
     cout << "Testing: BitArray append " << endl;
     BA = new BitArray(15);
@@ -136,9 +130,7 @@ int main(void){
     for(;(i-15)<16;i++){
       assert(BA->getElem(i)==1);
     }
-    delete BA;
-    delete BA2;
-
+/*
     cout << "Testing: BitArray []" << endl;
     BA = new BitArray(12);
 
