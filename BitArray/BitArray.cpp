@@ -47,21 +47,6 @@
 
 using namespace std;
 
-// Byte struct
-struct _Byte{ 
-    public:
-        shared_ptr<BitArray> Mother;
-        long long int elem_byte;
-        unsigned char uchar;
-        unsigned index;
-        Byte& operator=(Byte &byt);
-        Byte& operator=(int ind);
-        operator int();
-    
-};
-// The number of bits in a single unsigned char
-
-
 /******************************************************************************
  * Internal Library Functions                                                 *
  ******************************************************************************/
@@ -82,24 +67,24 @@ static inline long long int _getBitInd(const long long int bits){
 
 // Given a unsigned char and the long long index within the unsigned char determine the value of the bit it
 // should be either a 1 or a 0, long long index must be between 0 and 7 inclusive.
-static inline unsigned int _getBit(const unsigned char &uchar, const long long int ind){
+static inline unsigned int _getBit(const unsigned char * uchar, const long long int ind){
    switch(ind){
      case 0:
-       return uchar & 0x1;
+       return (*uchar) & 0x1;
      case 1:
-       return (uchar&(0x1<<1))>>1 ;
+       return ((*uchar)&(0x1<<1))>>1 ;
      case 2:
-       return (uchar&(0x1<<2))>>2;
+       return ((*uchar)&(0x1<<2))>>2;
      case 3:
-       return (uchar&(0x1<<3))>>3;
+       return ((*uchar)&(0x1<<3))>>3;
      case 4:
-       return (uchar&(0x1<<4))>>4;
+       return ((*uchar)&(0x1<<4))>>4;
      case 5:
-       return (uchar&(0x1<<5))>>5;
+       return ((*uchar)&(0x1<<5))>>5;
      case 6:
-       return (uchar&(0x1<<6))>>6;
+       return ((*uchar)&(0x1<<6))>>6;
      case 7:
-       return (uchar&(0x1<<7))>>7;
+       return ((*uchar)&(0x1<<7))>>7;
      default:
        return -1;
    }
@@ -107,38 +92,38 @@ static inline unsigned int _getBit(const unsigned char &uchar, const long long i
 
 // Given a unsigned char and the long long index within the unsigned char set the bit to a value of 1
 // long long index must be between 0 and 7 inclusive.
-static inline void _setBit(unsigned char  &uchar, const long long int ind){
+static inline void _setBit(unsigned char * uchar, const long long int ind){
   switch(ind){
     case 0:{
-      uchar = uchar | 1;
+      (*uchar) = (*uchar) | 1;
       break;
     }
     case 1:{
-      uchar = uchar | (1<<1);
+      (*uchar) = (*uchar) | (1<<1);
       break;
     }
     case 2:{
-      uchar = uchar | (1<<2);
+      (*uchar) = (*uchar) | (1<<2);
       break;
     }
     case 3:{
-      uchar = uchar | (1<<3);
+      (*uchar) = (*uchar) | (1<<3);
       break;
     }
     case 4:{
-      uchar = uchar | (1<<4);
+      (*uchar) = (*uchar) | (1<<4);
       break;
     }
     case 5:{
-      uchar = uchar | (1<<5);
+      (*uchar) = (*uchar) | (1<<5);
       break;
     }
     case 6:{
-      uchar = uchar | (1<<6);
+      (*uchar) = (*uchar) | (1<<6);
       break;
     }
     case 7:{
-      uchar = uchar | (1<<7);
+      (*uchar) = (*uchar) | (1<<7);
       break;
     }
   }
@@ -146,38 +131,38 @@ static inline void _setBit(unsigned char  &uchar, const long long int ind){
 
 // Given a unsigned char and the long long index within the unsigned char set the bit to a value of 0
 // long long index must be between 0 and 7 inclusive.
-static inline void _unsetBit(unsigned char &uchar, const long long int ind){
+static inline void _unsetBit(unsigned char * uchar, const long long int ind){
    switch(ind){
      case 0:{
-       uchar = uchar & !1;
+       (*uchar) = (*uchar) & !1;
        break;
      }
      case 1:{
-       uchar = uchar & !(1<<1);
+       (*uchar) = (*uchar) & !(1<<1);
        break;
      }
      case 2:{
-       uchar = uchar & !(1<<2);
+       (*uchar) = (*uchar) & !(1<<2);
        break;
      }
      case 3:{
-       uchar = uchar & !(1<<3);
+       (*uchar) = (*uchar) & !(1<<3);
        break;
      }
      case 4:{
-       uchar = uchar & !(1<<4);
+       (*uchar) = (*uchar) & !(1<<4);
        break;
      }
      case 5:{
-       uchar = uchar & !(1<<5);
+       (*uchar) = (*uchar) & !(1<<5);
        break;
      }
      case 6:{
-       uchar = uchar & !(1<<6);
+       (*uchar) = (*uchar) & !(1<<6);
        break;
      }
      case 7:{
-       uchar = uchar & !(1<<7);
+       (*uchar) = (*uchar) & !(1<<7);
        break;
      }
    }
@@ -188,7 +173,7 @@ inline static int _getElem(shared_ptr<vector<unsigned char>> array, const long l
    long long int elem_unsigned = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
    long long int ind = _getBitInd(elem_bit);
-   return _getBit((*array.get())[elem_unsigned],ind);
+   return _getBit(&((*array.get())[elem_unsigned]),ind);
 }
 
 inline static void _setElem(shared_ptr<vector<unsigned char>> array, const long long int elem_bit){
@@ -196,7 +181,7 @@ inline static void _setElem(shared_ptr<vector<unsigned char>> array, const long 
     long long int elem_unsigned = _getElemByte(elem_bit);
     // We also need to know which bit, thus we will also calculate the modulus
     long long int index = _getBitInd(elem_bit);
-    _setBit((*array.get())[elem_unsigned],index);
+    _setBit(&((*array.get())[elem_unsigned]),index);
 }
 
 inline static void _unsetElem(shared_ptr<vector<unsigned char>> array, const long long int elem_bit){
@@ -204,7 +189,7 @@ inline static void _unsetElem(shared_ptr<vector<unsigned char>> array, const lon
     long long int elem_unsigned = _getElemByte(elem_bit);
     // We also need to know which bit, thus we will also calculate the modulus
     long long int index = _getBitInd(elem_bit);
-    _unsetBit((*array.get())[elem_unsigned],index);
+    _unsetBit(&((*array.get())[elem_unsigned]),index);
 }
 
 /******************************************************************************
@@ -217,8 +202,6 @@ inline static void _unsetElem(shared_ptr<vector<unsigned char>> array, const lon
  * Public Class Func tions                                                    *
  ******************************************************************************/
 
-
-/*
 Byte& Byte::operator=(Byte &byt){
     int temp_bit = _getBit(byt.uchar,byt.index);
     if(temp_bit){
@@ -226,7 +209,6 @@ Byte& Byte::operator=(Byte &byt){
     }else{
         _unsetBit(this->uchar,this->index);
     }
-    this->Mother->array.get()[this->elem_byte]=this->uchar;
     return *this;
 } 
 
@@ -236,19 +218,20 @@ Byte& Byte::operator=(int ind){
     }else{
         _unsetBit(this->uchar,this->index);
     }
-    this->Mother->array.get()[this->elem_byte]=this->uchar;
     return *this;
 }
 
 Byte::operator int(){
     return _getBit(this->uchar,this->index);
 }
-*/
+
 BitArray::BitArray(void){
   this->size = BITS_BYTE;
   try{
-    shared_ptr<vector<unsigned char>> temp(new vector<unsigned char>(1));
-    this->array = temp;
+    shared_ptr<vector<unsigned char>> temp_array(new vector<unsigned char>(1));
+    this->array = temp_array;
+    shared_ptr<Byte> temp_byte(new Byte);
+    this->temp = temp_byte;
     //this->array = new unsigned char [1];
   }catch(bad_alloc& ba){
     cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
@@ -270,8 +253,10 @@ BitArray::BitArray(long long int size){
     long long int num_uchars = _getBytes(size-1);
     // Allocated memory for bit array pointer
     try{
-        shared_ptr<vector<unsigned char>> temp(new vector<unsigned char>(num_uchars));
-        this->array = temp;
+        shared_ptr<vector<unsigned char>> temp_array(new vector<unsigned char>(num_uchars));
+        this->array = temp_array;
+        shared_ptr<Byte> temp_byte(new Byte);
+        this->temp = temp_byte;
         this->size = size;
     } catch(bad_alloc& ba){
         cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
@@ -298,8 +283,10 @@ BitArray::BitArray(long int size){
     long long int num_uchars = _getBytes(size2-1);
     // Allocated memory for bit array pointer
     try{
-        shared_ptr<vector<unsigned char>> temp(new vector<unsigned char>(num_uchars));
-        this->array = temp;
+        shared_ptr<vector<unsigned char>> temp_array(new vector<unsigned char>(num_uchars));
+        this->array = temp_array;
+        shared_ptr<Byte> temp_byte(new Byte);
+        this->temp = temp_byte;
         this->size = size2;
     } catch(bad_alloc& ba){
         cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
@@ -324,8 +311,10 @@ BitArray::BitArray(int size){
   long long int num_uchars = _getBytes(size2-1);
   // Allocated memory for bit array pointer
   try{
-    shared_ptr<vector<unsigned char>> temp(new vector<unsigned char>(num_uchars));
-    this->array = temp;
+    shared_ptr<vector<unsigned char>> temp_array(new vector<unsigned char>(num_uchars));
+    this->array = temp_array;
+    shared_ptr<Byte> temp_byte(new Byte);
+    this->temp = temp_byte;
     this->size = size2;
   } catch(bad_alloc& ba){
     cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
@@ -399,35 +388,32 @@ int BitArray::getElem(const long long int elem_bit){
 }
 
 /* Manipulators                                                               */
+void BitArray::operator=(BitArray &BitA){
+  cout << "Assignment operator" << endl;
 
-/*Byte& BitArray::operator[](const long long int elem_bit){
+    this->temp = BitA.temp;
+    this->array = BitA.array;
+    this->size = BitA.size;
+}
+
+Byte& BitArray::operator[](const long long int elem_bit){
     unsigned ind          = (unsigned) (elem_bit%BITS_BYTE);
     long long int elem_byte = elem_bit/BITS_BYTE;
-    this->temp.elem_byte     = elem_byte;
-    this->temp.uchar       = this->array[elem_byte];
-    this->temp.index        = ind;
-    this->temp.Mother       = this;
-    return (this->temp);
+    (this->temp.get())->elem_byte     = elem_byte;
+    (this->temp.get())->uchar       = &((*this->array.get())[elem_byte]);
+    (this->temp.get())->index        = ind;
+   // Byte * test = new Byte;
+    return (*this->temp);
 }
 
 Byte& BitArray::operator[](const long int elem_bit){
-    return this[(long long int) elem_bit];
+    return (*this)[(long long int) elem_bit];
 }
 
 Byte& BitArray::operator[](const int elem_bit){
-    return this[(long long int) elem_bit];
+    return (*this)[(long long int) elem_bit];
 }
 
-void BitArray::operator = (const BitArray &BitA){
-  cout << "Assignment operator" << endl;
-  if(_getElem(BitA.array,BitA.int_long long index)){
-    _setElem(this->array,this->int_long long index);
-  }else{
-    _unsetElem(this->array,this->int_long long index);
-  }
-}
-
-*/
 bool operator==(BitArray const &BitAL, BitArray const &BitAR){
   if(BitAL.size!=BitAR.size){
     return false;
@@ -467,25 +453,26 @@ void BitArray::operator = (const long long int index){
 void BitArray::append(BitArray &BitA){
 
     long long int num_bytes = (this->size+BitA.size-1)/BITS_BYTE+1;
+    shared_ptr<vector<unsigned char>> array_new;    
     try{
-        shared_ptr<vector<unsigned char>> array_new = (new vector<unsigned char>(num_bytes));
+        shared_ptr<vector<unsigned char>> temp(new vector<unsigned char>(num_bytes));
+        array_new = temp;
     }catch(bad_alloc& ba){
         cerr << "ERROR could not allocate memory for array: " << ba.what() << endl;
     }
 
     num_bytes = (this->size-1)/BITS_BYTE+1;
-
+    cout << "BIts " << this->size << " Bytes " << (this->size-1)/BITS_BYTE+1 << endl;
     long long int count;
     for( count = 0; count<num_bytes;count++){
-        (*array_new.get)[count] = (*this->array.get())[count];
+        (*array_new.get())[count] = (*this->array.get())[count];
     }
 
-    long long int bit_index = (count-1)*BITS+(this->size-(count-1)*BITS);
-    delete [] this->array;
+    long long int bit_index = (count-1)*BITS_BYTE+(this->size-(count-1)*BITS_BYTE);
     this->array = array_new;
     this->size  = bit_index+BitA.size;
 
-    for(long long int bit_index2 = 0;bit_index2<BitA.size;bit_index2++,bit_index){
+    for(long long int bit_index2 = 0;bit_index2<BitA.size;bit_index2++,bit_index++){
         if(_getElem(BitA.array,bit_index2)){
             _setElem(this->array,bit_index);
         }else{
@@ -532,13 +519,13 @@ int BitArray::test_BitArrayInternal(void){
   unsigned char uchar = 0;
 
   for(int ind=0;ind<8;ind++) {
-    unsigned int bit = _getBit(uchar,ind);
+    unsigned int bit = _getBit(&uchar,ind);
     assert(bit==0);
   }
 
   uchar = 255;
   for(int ind=0;ind<8;ind++) {
-    unsigned int bit = _getBit(uchar,ind);
+    unsigned int bit = _getBit(&uchar,ind);
     assert(bit==1);
   }
 
@@ -551,8 +538,8 @@ int BitArray::test_BitArrayInternal(void){
 
   cout << "Testing: _setBit\n" << endl;
   uchar = 0;
-  for(int ind=0;ind<8;ind++) _setBit(uchar,ind);
-  for(int ind=0;ind<8;ind++) assert(_getBit(uchar,ind)==1);
+  for(int ind=0;ind<8;ind++) _setBit(&uchar,ind);
+  for(int ind=0;ind<8;ind++) assert(_getBit(&uchar,ind)==1);
 
 
   cout << "Testing: _setElem\n" << endl;
@@ -563,9 +550,9 @@ int BitArray::test_BitArrayInternal(void){
   }
 
   cout << "Testing: _unsetBit\n" << endl;
-  for(int ind=0;ind<8;ind++) _unsetBit(uchar,ind);
+  for(int ind=0;ind<8;ind++) _unsetBit(&uchar,ind);
   for(int ind=0;ind<8;ind++) {
-    unsigned int bit = _getBit(uchar,ind);
+    unsigned int bit = _getBit(&uchar,ind);
     assert(bit==0);
   }
 

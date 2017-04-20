@@ -85,7 +85,8 @@ class BitArray{
         Byte& operator[](const long int elem);
         Byte& operator[](const int elem);
      
-        BitArray& operator=(BitArray BitA);
+        void operator=(BitArray &BitA);
+
         friend bool operator==(BitArray const &BitAL, BitArray const &BitAR);
         friend bool operator!=(BitArray const &BitAL, BitArray const &BitAR);
     
@@ -101,6 +102,18 @@ class BitArray{
 //void operator=(TransitByte &Tbyt, const int val);
 //void operator=(int &val, const TransitByte &Tbyt);
 
+
+struct _Byte{
+     public:
+         shared_ptr<BitArray> Mother;
+         long long int elem_byte;
+         unsigned char * uchar;
+         unsigned index;
+         Byte& operator=(Byte &byt);
+         Byte& operator=(int ind);
+
+         operator int();
+ };
 
  /******************************************************************************
  * Library Functions:                                                         *

@@ -117,34 +117,33 @@ int main(void){
     assert(ans==true);
 
     cout << "Testing: BitArray append " << endl;
-    BA = new BitArray(15);
-    BA2 = new BitArray(16);
+    BitArray BA17 = BitArray(15);
+    BitArray BA18 = BitArray(16);
     long long int i;
     for(i=0;i<16;i++){
-      BA2->setElem(i);
+      BA18.setElem(i);
     }
-    BA->append(*BA2);
+    BA17.append(BA18);
     for(i=0;i<15;i++){
-      assert(BA->getElem(i)==0);
+      assert(BA17.getElem(i)==0);
     }
     for(;(i-15)<16;i++){
-      assert(BA->getElem(i)==1);
+      assert(BA17.getElem(i)==1);
     }
-/*
+
     cout << "Testing: BitArray []" << endl;
-    BA = new BitArray(12);
-
-    //TransitByte * Tbyt;
-    BA[0] = 1;
+    BitArray BA19 = BitArray(12);
+ 
+    (BA19[0]) = 1;
     int temp;
-    temp = int(BA[0]);
+    BA19[11] = BA19[0];
+    temp = BA19[0];
     cout << "PRINTING temp " << temp << endl;
-    BA->print();
-    //BA->setElem(1);
+    BA19.print();
+    BA19.setElem(1);
 
-    BA[0] = 1;
-    cout << "Registers\n" << endl;
-    cout << BA[0] << endl;
+    //cout << "Registers\n" << endl;
+    //cout << BA[0] << endl;
     //BA[1] = 1;
     //BA[2] = 1;
     //temp = 2;
@@ -152,7 +151,7 @@ int main(void){
     //cout << "PRINTING temp " << temp << endl;
     //BA->print();
     //BA->setElem(2);
- */ /*  BA[1];
+    /*  BA[1];
     BA[0];
     temp = int(BA[2]);
     cout << "PRINTING temp " << temp << endl;
