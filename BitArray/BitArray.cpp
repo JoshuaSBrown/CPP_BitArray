@@ -129,6 +129,10 @@ static inline void _setBit(unsigned char * uchar, const long long int ind){
   }
 }
 
+static inline void _setByte(unsigned char * uchar){
+  (*uchar) = 255;
+}
+
 // Given a unsigned char and the long long index within the unsigned char set the bit to a value of 0
 // long long index must be between 0 and 7 inclusive.
 static inline void _unsetBit(unsigned char * uchar, const long long int ind){
@@ -168,30 +172,44 @@ static inline void _unsetBit(unsigned char * uchar, const long long int ind){
    }
  }
 
-inline static int _getElem(shared_ptr<vector<unsigned char>> array, const long long int elem_bit){
-   // Determine which unsigned char in the array corresponds to elem_bit            
+ static inline void _unsetByte(unsigned char * uchar){
+   (*uchar) = 0;
+ }
+
+static inline int _getElem(shared_ptr<vector<unsigned char>> array,
+                           const long long int elem_bit           ){
+   // Determine which unsigned char in the array corresponds to elem_bit
    long long int elem_unsigned = _getElemByte(elem_bit);
    // We also need to know which bit, thus we will also calculate the modulus
    long long int ind = _getBitInd(elem_bit);
    return _getBit(&((*array.get())[elem_unsigned]),ind);
 }
 
-inline static void _setElem(shared_ptr<vector<unsigned char>> array, const long long int elem_bit){
-    // Determine which unsigned char in the array corresponds to elem_bit            
+static inline void _setElem(shared_ptr<vector<unsigned char>> array,
+                            const long long int elem_bit           ){
+    // Determine which unsigned char in the array corresponds to elem_bit
     long long int elem_unsigned = _getElemByte(elem_bit);
     // We also need to know which bit, thus we will also calculate the modulus
     long long int index = _getBitInd(elem_bit);
     _setBit(&((*array.get())[elem_unsigned]),index);
 }
 
-inline static void _unsetElem(shared_ptr<vector<unsigned char>> array, const long long int elem_bit){
-    // Determine which unsigned char in the array corresponds to elem_bit             
+static inline void _unsetElem(shared_ptr<vector<unsigned char>> array,
+                              const long long int elem_bit           ){
+    // Determine which unsigned char in the array corresponds to elem_bit
     long long int elem_unsigned = _getElemByte(elem_bit);
     // We also need to know which bit, thus we will also calculate the modulus
     long long int index = _getBitInd(elem_bit);
     _unsetBit(&((*array.get())[elem_unsigned]),index);
 }
 
+static inline void _cycle(shared_ptr<vector<unsigned char>> array,
+                          void (*fun) (unsigned char * uchar)){
+
+     for(unsigned i=0;i<(*array.get()).size();i++){
+       fun( &((*array.get()).at(i)) );
+     }
+}
 /******************************************************************************
 * Private Class Functions                                                     *
 *******************************************************************************/
@@ -204,13 +222,15 @@ inline static void _unsetElem(shared_ptr<vector<unsigned char>> array, const lon
 
 Byte& Byte::operator=(Byte &byt){
     int temp_bit = _getBit(byt.uchar,byt.index);
+    cout << "temp_bit " << temp_bit << endl;
+    cout << "index " << byt.index << endl;
     if(temp_bit){
         _setBit(this->uchar,this->index);
     }else{
         _unsetBit(this->uchar,this->index);
     }
     return *this;
-} 
+}
 
 Byte& Byte::operator=(int ind){
     if(ind){
@@ -322,7 +342,7 @@ BitArray::BitArray(int size){
     this->size  = 0;
     num_uchars = 0;
   }
- 
+
   cout << "num unsigned " << num_uchars << endl;
   cout << "array use count " << this->array.use_count() << endl;
   // Initialize elements of unsigned char array to 0
@@ -399,9 +419,9 @@ void BitArray::operator=(BitArray &BitA){
 Byte& BitArray::operator[](const long long int elem_bit){
     unsigned ind          = (unsigned) (elem_bit%BITS_BYTE);
     long long int elem_byte = elem_bit/BITS_BYTE;
-    (this->temp.get())->elem_byte     = elem_byte;
-    (this->temp.get())->uchar       = &((*this->array.get())[elem_byte]);
-    (this->temp.get())->index        = ind;
+    (this->temp.get())->elem_byte = elem_byte;
+    (this->temp.get())->uchar     = &((*this->array.get())[elem_byte]);
+    (this->temp.get())->index     = ind;
    // Byte * test = new Byte;
     return (*this->temp);
 }
@@ -440,20 +460,21 @@ bool operator!=(BitArray const &BitAL, BitArray const &BitAR){
     }
     return false;
 }
-/*
-void BitArray::operator = (const long long int index){
-  if(var){
-    _setElem(this->array,this->int_long long index);
+
+/* Sets the whole array either equal to 1s or 0s depending on what the intger *
+ * is.                                                                        */
+void BitArray::operator = (int setOn){
+  if(setOn){
+    _cycle(this->array,&_setByte);
   }else{
-    _unsetElem(this->array,this->int_long long index);
+    _cycle(this->array,&_unsetByte);
   }
 }
-*/
 
 void BitArray::append(BitArray &BitA){
 
     long long int num_bytes = (this->size+BitA.size-1)/BITS_BYTE+1;
-    shared_ptr<vector<unsigned char>> array_new;    
+    shared_ptr<vector<unsigned char>> array_new;
     try{
         shared_ptr<vector<unsigned char>> temp(new vector<unsigned char>(num_bytes));
         array_new = temp;

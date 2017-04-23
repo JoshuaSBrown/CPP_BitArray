@@ -84,12 +84,13 @@ class BitArray{
         Byte& operator[](const long long int elem);
         Byte& operator[](const long int elem);
         Byte& operator[](const int elem);
-     
-        void operator=(BitArray &BitA);
 
+        void operator=(BitArray &BitA);
+        void operator=(int setOn);
+        
         friend bool operator==(BitArray const &BitAL, BitArray const &BitAR);
         friend bool operator!=(BitArray const &BitAL, BitArray const &BitAR);
-    
+
         void append(BitArray &BitA);
         int test_BitArrayInternal(void);
 
